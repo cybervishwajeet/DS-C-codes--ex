@@ -1,14 +1,11 @@
 #include <stdio.h>
-#include <stdlib.h> 
-#include <conio.h>  
+#include <stdlib.h>
 
-typedef struct node
-{
+typedef struct node {
     int data;
     struct node *next;
 } node;
 
-// Function prototypes
 node* create(int n);
 void print(node *p);
 void count(node *p);
@@ -20,24 +17,19 @@ node* delete_at_Begin(node *head);
 node* delete_at_Middle(node *head);
 node* delete_at_End(node *head);
 
-int main()
-{
+int main() {
     node *Head = NULL;
     int no, op;
-    
-    clrscr(); // This is non-standard. Use system("cls") for Windows or a similar function for other OS.
 
-    do
-    {
+    do {
         printf("\n************SLL OPERATIONS*************");
-        printf("\n1. Create\n2. Print\n3. Count\n4. Search");
-        printf("\n5. Insert at Begin\n6. Insert at Middle\n7. Insert at End");
-        printf("\n8. Delete from Begin\n9. Delete from Middle\n10. Delete from End\n11. Exit");
+        printf("\n1.Create\n2.Print\n3.Count\n4.Search");
+        printf("\n5.Insert at Begin\n6.Insert at Middle\n7.Insert at End");
+        printf("\n8.Delete from Begin\n9.Delete from Middle\n10.Delete from End\n11.Exit");
         printf("\nEnter your choice: ");
         scanf("%d", &op);
 
-        switch(op)
-        {
+        switch(op) {
             case 1:
                 printf("\nEnter size of linked list: ");
                 scanf("%d", &no);
@@ -71,173 +63,175 @@ int main()
                 Head = delete_at_End(Head);
                 break;
             case 11:
-                printf("\nGood Bye.. Thanks for using our Application!!!");
+                printf("\nGood Bye..Thanks for using our Application!!!\n");
                 break;
             default:
-                printf("\nPlease select a valid option!!!");
+                printf("\nPlease select a valid option!!!\n");
         }
-
-        // Using getchar() to wait for user input if getch() is not available
-        //getchar(); // Uncomment if needed to pause before clearing screen
-        //clrscr(); // Uncomment if needed to clear screen after each operation
-
     } while(op != 11);
 
     return 0;
 }
 
-node* create(int n)
-{
-    node *head = NULL, *p = NULL;
+node* create(int n) {
+    node *head = NULL, *p = NULL, *temp = NULL;
     int i, x;
 
     if (n <= 0) {
-        printf("\nInvalid size for linked list.");
+        printf("\nInvalid size!\n");
         return NULL;
     }
 
     printf("\nEnter data: ");
     scanf("%d", &x);
-    
+
     head = (node*)malloc(sizeof(node));
+    if (head == NULL) {
+        printf("\nMemory allocation failed!\n");
+        return NULL;
+    }
     head->data = x;
     head->next = NULL;
     p = head;
 
-    for(i = 2; i <= n; i++)
-    {
+    for (i = 2; i <= n; i++) {
         printf("\nEnter data: ");
         scanf("%d", &x);
-        
-        p->next = (node*)malloc(sizeof(node));
-        p = p->next;
-        p->data = x;
-        p->next = NULL;
+
+        temp = (node*)malloc(sizeof(node));
+        if (temp == NULL) {
+            printf("\nMemory allocation failed!\n");
+            return head; // Return the partially created list
+        }
+        temp->data = x;
+        temp->next = NULL;
+        p->next = temp;
+        p = temp;
     }
 
-    printf("\nLinked list created successfully:");
+    printf("\nLinked list created successfully:\n");
     return head;
 }
 
-void print(node *p)
-{
+void print(node *p) {
     if (p == NULL) {
-        printf("\nLinked list is empty.");
+        printf("\nThe list is empty.\n");
         return;
     }
-
-    printf("\nSLL Nodes: ");
-    while(p != NULL)
-    {
+    printf("\nSLL Nodes:\n");
+    while(p != NULL) {
         printf("%d -> ", p->data);
         p = p->next;
     }
     printf("NULL\n");
 }
 
-void count(node *p)
-{
+void count(node *p) {
     int count = 0;
-    while(p != NULL)
-    {
+    while(p != NULL) {
         count++;
         p = p->next;
     }
-    printf("\nNumber of Nodes: %d", count);
+    printf("\nNumber of Nodes: %d\n", count);
 }
 
-void search(node *p)
-{
-    int key, found = 0;
+void search(node *p) {
+    int key, flag = 0;
     printf("\nEnter key element to be searched: ");
     scanf("%d", &key);
-
-    while(p != NULL)
-    {
-        if(key == p->data)
-        {
-            found = 1;
+    while(p != NULL) {
+        if (key == p->data) {
+            flag = 1;
             break;
         }
         p = p->next;
     }
-
-    if(found)
-        printf("\nElement is found!!!");
+    if (flag)
+        printf("\nElement is found!!!\n");
     else
-        printf("\nElement is not found!!!");
+        printf("\nElement is not found!!!\n");
 }
 
-node* insert_at_Begin(node *head)
-{
+node* insert_at_Begin(node *head) {
     node *q;
     int x;
     printf("\nEnter data: ");
     scanf("%d", &x);
 
     q = (node*)malloc(sizeof(node));
+    if (q == NULL) {
+        printf("\nMemory allocation failed!\n");
+        return head;
+    }
     q->data = x;
     q->next = head;
+    head = q;
 
-    printf("\nNode inserted at Begin successfully!!!");
-    return q;
+    printf("\nNode inserted at Begin successfully!!!\n");
+    return head;
 }
 
-node* insert_at_End(node *head)
-{
+node* insert_at_End(node *head) {
     node *q, *p;
     int x;
     printf("\nEnter data: ");
     scanf("%d", &x);
 
     q = (node*)malloc(sizeof(node));
+    if (q == NULL) {
+        printf("\nMemory allocation failed!\n");
+        return head;
+    }
     q->data = x;
     q->next = NULL;
 
     if (head == NULL) {
-        printf("\nNode inserted at end successfully!!!");
-        return q;
+        head = q;
+    } else {
+        p = head;
+        while(p->next != NULL) {
+            p = p->next;
+        }
+        p->next = q;
     }
 
-    p = head;
-    while(p->next != NULL)
-    {
-        p = p->next;
-    }
-    p->next = q;
-
-    printf("\nNode inserted at end successfully!!!");
+    printf("\nNode inserted at end successfully!!!\n");
     return head;
 }
 
-node* insert_at_Middle(node *head)
-{
+node* insert_at_Middle(node *head) {
     node *q, *p;
     int x, loc, i;
 
     if (head == NULL) {
-        printf("\nLinked list is empty!!! You cannot insert node at middle!!!");
+        printf("\nLinked list is empty!!! You cannot insert a node in the middle!!!\n");
         return NULL;
     }
 
     printf("\nEnter data: ");
     scanf("%d", &x);
-    printf("\nEnter location for insertion: ");
-    scanf("%d", &loc);
-
-    if (loc <= 1) {
-        return insert_at_Begin(head);
-    }
 
     q = (node*)malloc(sizeof(node));
+    if (q == NULL) {
+        printf("\nMemory allocation failed!\n");
+        return head;
+    }
     q->data = x;
     q->next = NULL;
 
+    printf("\nEnter location for insertion: ");
+    scanf("%d", &loc);
+
+    if (loc <= 0) {
+        printf("\nInvalid location!\n");
+        free(q);
+        return head;
+    }
+
     p = head;
-    for(i = 1; i < loc - 1; i++)
-    {
+    for (i = 1; i < loc - 1; i++) {
         if (p == NULL) {
-            printf("\nLocation out of bounds.");
+            printf("\nLocation out of bounds!\n");
             free(q);
             return head;
         }
@@ -247,16 +241,15 @@ node* insert_at_Middle(node *head)
     q->next = p->next;
     p->next = q;
 
-    printf("\nNode inserted at middle successfully!!!");
+    printf("\nNode inserted at middle successfully!!!\n");
     return head;
 }
 
-node* delete_at_Begin(node *head)
-{
+node* delete_at_Begin(node *head) {
     node *q;
 
     if (head == NULL) {
-        printf("\nLinked list is already empty!!! You cannot delete node.");
+        printf("\nLinked list is empty!!! You cannot delete a node!!!\n");
         return NULL;
     }
 
@@ -264,16 +257,15 @@ node* delete_at_Begin(node *head)
     head = head->next;
     free(q);
 
-    printf("\nNode deleted from Begin successfully!!!");
+    printf("\nNode deleted from Begin successfully!!!\n");
     return head;
 }
 
-node* delete_at_End(node *head)
-{
+node* delete_at_End(node *head) {
     node *q, *p;
 
     if (head == NULL) {
-        printf("\nLinked list is already empty!!! You cannot delete node.");
+        printf("\nLinked list is empty!!! You cannot delete a node!!!\n");
         return NULL;
     }
 
@@ -283,50 +275,56 @@ node* delete_at_End(node *head)
     }
 
     p = head;
-    while (p->next->next != NULL)
-    {
+    while(p->next->next != NULL) {
         p = p->next;
     }
+
     q = p->next;
     p->next = NULL;
     free(q);
 
-    printf("\nNode deleted from End successfully!!!");
+    printf("\nNode deleted from End successfully!!!\n");
     return head;
 }
 
-node* delete_at_Middle(node *head)
-{
+node* delete_at_Middle(node *head) {
     node *q, *p;
     int loc, i;
 
     if (head == NULL) {
-        printf("\nLinked list is already empty!!! You cannot delete node.");
+        printf("\nLinked list is empty!!! You cannot delete a node!!!\n");
         return NULL;
     }
 
     printf("\nEnter location of node for deletion: ");
     scanf("%d", &loc);
 
-    if (loc <= 1) {
+    if (loc <= 0) {
+        printf("\nInvalid location!\n");
+        return head;
+    }
+
+    if (loc == 1) {
         return delete_at_Begin(head);
     }
 
     p = head;
-    for(i = 1; i < loc - 1; i++)
-    {
+    for (i = 1; i < loc - 1; i++) {
         if (p == NULL || p->next == NULL) {
-            printf("\nLocation out of bounds.");
+            printf("\nLocation out of bounds!\n");
             return head;
         }
         p = p->next;
     }
 
     q = p->next;
+    if (q == NULL) {
+        printf("\nLocation out of bounds!\n");
+        return head;
+    }
     p->next = q->next;
-    free(q);
-
-    printf("\nNode deleted from Middle successfully!!!");
-    return head;
-}
-
+     free(q);
+     printf("\n node delete succesfully !!!");
+     return(head);
+ }
+ 
